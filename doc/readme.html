@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.29.0">
+    <meta name="project" content="maps_in v0.1.0">
+
+    <title>maps_in — maps_in v0.1.0</title>
+    <link rel="stylesheet" href="dist/html-erlang-4XYKNH4U.css" />
+
+    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
+    <script src="dist/handlebars.templates-X7YVL3G2.js"></script>
+    <script src="dist/sidebar_items-8155A207.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/html-XN2TSG4M.js"></script>
+
+
+  </head>
+  <body data-type="extras" class="page-extra">
+    <script>
+
+      try {
+        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
+
+        if (settings.theme === 'dark' ||
+           ((settings.theme === 'system' || settings.theme == null) &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+           ) {
+          document.body.classList.add('dark')
+        }
+      } catch (error) { }
+    </script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle" aria-label="toggle sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <i class="ri-search-2-line" aria-hidden="true" title="Submit search"></i>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <i class="ri-close-line ri-lg" aria-hidden="true" title="Cancel search"></i>
+    </button>
+    <label class="search-label">
+      <p class="sr-only">Search</p>
+      <input name="q" type="text" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+
+    <div class="sidebar-projectDetails">
+      <a href="readme.html" class="sidebar-projectName" translate="no">
+maps_in
+      </a>
+      <strong class="sidebar-projectVersion" translate="no">
+        v0.1.0
+      </strong>
+    </div>
+    <ul class="sidebar-listNav">
+      <li><a id="extras-list-link" href="#full-list">Pages</a></li>
+
+        <li><a id="modules-list-link" href="#full-list">Modules</a></li>
+
+
+    </ul>
+  </div>
+
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <output role="status" id="toast"></output>
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+<h1>
+<button class="settings display-settings">
+  <i class="ri-settings-3-line"></i>
+  <span class="sr-only">Settings</span>
+</button>
+
+
+    <a href="https://github.com/williamthome/maps_in/blob/v0.1.0/README.md#L1" title="View Source" class="view-source" rel="help">
+      <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+      <span class="sr-only">View Source</span>
+    </a>
+
+  <span>maps_in</span>
+</h1>
+
+<p>An Erlang library to handle nested maps.</p><h2 id="table-of-contents" class="section-heading">
+  <a href="#table-of-contents" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">table-of-contents</p>
+  </a>
+  Table of contents
+</h2>
+<ul><li><a href="#general-info">General info</a></li><li><a href="#usage">Usage</a></li><li><a href="#build">Build</a></li><li><a href="#test">Test</a></li></ul><h2 id="general-info" class="section-heading">
+  <a href="#general-info" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">general-info</p>
+  </a>
+  General info
+</h2>
+<p>Erlang does not provide functions to handle nested maps, so this lib has this purpose and always uses a list of keys to manipulate maps.</p><h2 id="usage" class="section-heading">
+  <a href="#usage" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">usage</p>
+  </a>
+  Usage
+</h2>
+<h3 id="get-2" class="section-heading">
+  <a href="#get-2" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">get-2</p>
+  </a>
+  get/2
+</h3>
+<pre><code class="makeup erlang" translate="no"><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="4760483547-1">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="4760483547-2">#{</span><span class="ss">nested</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">map</span><span class="p" data-group-id="4760483547-2">}</span><span class="p" data-group-id="4760483547-1">}</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="4760483547-3">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="4760483547-4">#{</span><span class="ss">nested</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">map</span><span class="p" data-group-id="4760483547-4">}</span><span class="p" data-group-id="4760483547-3">}</span><span class="w">
+</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">maps_in</span><span class="p">:</span><span class="nf">get</span><span class="p" data-group-id="4760483547-5">(</span><span class="p" data-group-id="4760483547-6">[</span><span class="ss">my</span><span class="p">,</span><span class="w"> </span><span class="ss">nested</span><span class="p" data-group-id="4760483547-6">]</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="p" data-group-id="4760483547-5">)</span><span class="p">.</span><span class="w">
+</span><span class="ss">map</span></code></pre><h3 id="get-3" class="section-heading">
+  <a href="#get-3" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">get-3</p>
+  </a>
+  get/3
+</h3>
+<pre><code class="makeup erlang" translate="no"><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="2334095042-1">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="2334095042-2">#{</span><span class="ss">nested</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">map</span><span class="p" data-group-id="2334095042-2">}</span><span class="p" data-group-id="2334095042-1">}</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="2334095042-3">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="2334095042-4">#{</span><span class="ss">nested</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">map</span><span class="p" data-group-id="2334095042-4">}</span><span class="p" data-group-id="2334095042-3">}</span><span class="w">
+</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">maps_in</span><span class="p">:</span><span class="nf">get</span><span class="p" data-group-id="2334095042-5">(</span><span class="p" data-group-id="2334095042-6">[</span><span class="ss">my</span><span class="p">,</span><span class="w"> </span><span class="ss">unknown_key</span><span class="p" data-group-id="2334095042-6">]</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="p">,</span><span class="w"> </span><span class="ss">default</span><span class="p" data-group-id="2334095042-5">)</span><span class="p">.</span><span class="w">
+</span><span class="ss">default</span></code></pre><h3 id="put-3" class="section-heading">
+  <a href="#put-3" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">put-3</p>
+  </a>
+  put/3
+</h3>
+<pre><code class="makeup erlang" translate="no"><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="1861504871-1">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-2">#{</span><span class="ss">more</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-3">#{</span><span class="ss">deep</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-4">#{</span><span class="p" data-group-id="1861504871-4">}</span><span class="p" data-group-id="1861504871-3">}</span><span class="p" data-group-id="1861504871-2">}</span><span class="p" data-group-id="1861504871-1">}</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="1861504871-5">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-6">#{</span><span class="ss">more</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-7">#{</span><span class="ss">deep</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-8">#{</span><span class="p" data-group-id="1861504871-8">}</span><span class="p" data-group-id="1861504871-7">}</span><span class="p" data-group-id="1861504871-6">}</span><span class="p" data-group-id="1861504871-5">}</span><span class="w">
+</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">maps_in</span><span class="p">:</span><span class="nf">put</span><span class="p" data-group-id="1861504871-9">(</span><span class="p" data-group-id="1861504871-10">[</span><span class="ss">my</span><span class="p">,</span><span class="w"> </span><span class="ss">more</span><span class="p">,</span><span class="w"> </span><span class="ss">deep</span><span class="p" data-group-id="1861504871-10">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="1861504871-11">#{</span><span class="ss">nested</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">map</span><span class="p" data-group-id="1861504871-11">}</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="p" data-group-id="1861504871-9">)</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="1861504871-12">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-13">#{</span><span class="ss">more</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-14">#{</span><span class="ss">deep</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="1861504871-15">#{</span><span class="ss">nested</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">map</span><span class="p" data-group-id="1861504871-15">}</span><span class="p" data-group-id="1861504871-14">}</span><span class="p" data-group-id="1861504871-13">}</span><span class="p" data-group-id="1861504871-12">}</span></code></pre><h3 id="update-3" class="section-heading">
+  <a href="#update-3" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">update-3</p>
+  </a>
+  update/3
+</h3>
+<pre><code class="makeup erlang" translate="no"><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="8440180144-1">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-2">#{</span><span class="ss">more</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-3">#{</span><span class="ss">deep</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-4">#{</span><span class="p" data-group-id="8440180144-4">}</span><span class="p" data-group-id="8440180144-3">}</span><span class="p" data-group-id="8440180144-2">}</span><span class="p" data-group-id="8440180144-1">}</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="8440180144-5">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-6">#{</span><span class="ss">more</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-7">#{</span><span class="ss">deep</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-8">#{</span><span class="p" data-group-id="8440180144-8">}</span><span class="p" data-group-id="8440180144-7">}</span><span class="p" data-group-id="8440180144-6">}</span><span class="p" data-group-id="8440180144-5">}</span><span class="w">
+</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">maps_in</span><span class="p">:</span><span class="nf">update</span><span class="p" data-group-id="8440180144-9">(</span><span class="p" data-group-id="8440180144-10">[</span><span class="ss">my</span><span class="p">,</span><span class="w"> </span><span class="ss">unknown_key</span><span class="p" data-group-id="8440180144-10">]</span><span class="p">,</span><span class="w"> </span><span class="ss">error</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="p" data-group-id="8440180144-9">)</span><span class="p">.</span><span class="w">
+</span><span class="o">*</span><span class="o">*</span><span class="w"> </span><span class="ss">exception</span><span class="w"> </span><span class="nc">error</span><span class="p">:</span><span class="w"> </span><span class="ss">bad</span><span class="w"> </span><span class="nc">key</span><span class="p">:</span><span class="w"> </span><span class="ss">unknown_key</span><span class="w">
+</span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">maps_in</span><span class="p">:</span><span class="nf">update</span><span class="p" data-group-id="8440180144-11">(</span><span class="p" data-group-id="8440180144-12">[</span><span class="ss">my</span><span class="p">,</span><span class="w"> </span><span class="ss">more</span><span class="p">,</span><span class="w"> </span><span class="ss">deep</span><span class="p" data-group-id="8440180144-12">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8440180144-13">#{</span><span class="ss">nested</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">map</span><span class="p" data-group-id="8440180144-13">}</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="p" data-group-id="8440180144-11">)</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="8440180144-14">#{</span><span class="ss">my</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-15">#{</span><span class="ss">more</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-16">#{</span><span class="ss">deep</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="8440180144-17">#{</span><span class="ss">nested</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ss">map</span><span class="p" data-group-id="8440180144-17">}</span><span class="p" data-group-id="8440180144-16">}</span><span class="p" data-group-id="8440180144-15">}</span><span class="p" data-group-id="8440180144-14">}</span></code></pre><h3 id="get_and_update-3" class="section-heading">
+  <a href="#get_and_update-3" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">get_and_update-3</p>
+  </a>
+  get_and_update/3
+</h3>
+<pre><code class="makeup erlang" translate="no"><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="0727520160-1">#{</span><span class="ss">someone</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="0727520160-2">#{</span><span class="ss">age</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">17</span><span class="p" data-group-id="0727520160-2">}</span><span class="p" data-group-id="0727520160-1">}</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="0727520160-3">#{</span><span class="ss">someone</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="0727520160-4">#{</span><span class="ss">age</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">17</span><span class="p" data-group-id="0727520160-4">}</span><span class="p" data-group-id="0727520160-3">}</span><span class="w">
+</span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="nc">maps_in</span><span class="p">:</span><span class="nf">get_and_update</span><span class="p" data-group-id="0727520160-5">(</span><span class="p" data-group-id="0727520160-6">[</span><span class="ss">someone</span><span class="p">,</span><span class="w"> </span><span class="ss">age</span><span class="p" data-group-id="0727520160-6">]</span><span class="p">,</span><span class="w"> </span><span class="nf">fun</span><span class="p" data-group-id="0727520160-7">(</span><span class="n">Age</span><span class="p" data-group-id="0727520160-7">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">Age</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="n">Map</span><span class="p" data-group-id="0727520160-5">)</span><span class="p">.</span><span class="w">
+</span><span class="p" data-group-id="0727520160-8">#{</span><span class="ss">someone</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p" data-group-id="0727520160-9">#{</span><span class="ss">age</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mi">18</span><span class="p" data-group-id="0727520160-9">}</span><span class="p" data-group-id="0727520160-8">}</span></code></pre><h2 id="build" class="section-heading">
+  <a href="#build" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">build</p>
+  </a>
+  Build
+</h2>
+<pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">rebar3 compile
+</span></code></pre><h2 id="test" class="section-heading">
+  <a href="#test" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i>
+  <p class="sr-only">test</p>
+  </a>
+  Test
+</h2>
+<pre><code class="makeup shell" translate="no"><span class="gp unselectable">$ </span><span class="">rebar3 eunit
+</span></code></pre>
+<div class="bottom-actions">
+  <div class="bottom-actions-item">
+
+      <a href="api-reference.html" class="bottom-actions-button" rel="prev">
+        <span class="subheader">
+          ← Previous Page
+        </span>
+        <span class="title">
+API Reference
+        </span>
+      </a>
+
+  </div>
+  <div class="bottom-actions-item">
+
+      <a href="license.html" class="bottom-actions-button" rel="next">
+        <span class="subheader">
+          Next Page →
+        </span>
+        <span class="title">
+LICENSE
+        </span>
+      </a>
+
+  </div>
+</div>
+      <footer class="footer">
+
+          <p>
+            On Hex.pm:
+
+            <span class="line">
+              <a href="https://hex.pm/packages/maps_in/0.1.0" class="line footer-hex-package">Package</a>
+              <a href="https://preview.hex.pm/preview/maps_in/0.1.0" class="line">Preview</a>
+
+                <a href="https://preview.hex.pm/preview/maps_in/0.1.0/show/README.md">(current file)</a>
+
+            </span>
+
+            <button class="a-main line footer-button display-quick-switch">
+              Search
+            </button>
+          </p>
+
+        <p>
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.29.0) for the
+
+            <a href="https://erlang.org" title="Erlang" target="_blank" translate="no">Erlang programming language</a>
+
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+
+  </body>
+</html>
