@@ -7,7 +7,7 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([get/2, get/3, put/3, update/3, get_and_update/3]).
+-export([get/2, get/3, get_and_update/3, put/3, update/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -47,6 +47,21 @@ get([Key | Path], Map, Default) ->
     get(Path, maps:get(Key, Map), Default).
 
 %%------------------------------------------------------------------------------
+%% @doc get_and_update/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec get_and_update(Path, Fun, Map1) -> Map2 when
+    Path :: [term()],
+    Fun :: fun((term()) -> term()),
+    Map1 :: map(),
+    Map2 :: map().
+
+get_and_update([Key], Fun, Map) when is_function(Fun, 1) ->
+    maps:update(Key, Fun(maps:get(Key, Map)), Map);
+get_and_update([Key | Path], Fun, Map) when is_function(Fun, 1) ->
+    maps:update(Key, get_and_update(Path, Fun, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
 %% @doc put/3.
 %% @end
 %%------------------------------------------------------------------------------
@@ -75,21 +90,6 @@ update([Key | Path], Value, Map) ->
     maps:update(Key, update(Path, Value, maps:get(Key, Map, #{})), Map);
 update([], Map, _) ->
     Map.
-
-%%------------------------------------------------------------------------------
-%% @doc get_and_update/3.
-%% @end
-%%------------------------------------------------------------------------------
--spec get_and_update(Path, Fun, Map1) -> Map2 when
-    Path :: [term()],
-    Fun :: fun((term()) -> term()),
-    Map1 :: map(),
-    Map2 :: map().
-
-get_and_update([Key], Fun, Map) when is_function(Fun, 1) ->
-    maps:update(Key, Fun(maps:get(Key, Map)), Map);
-get_and_update([Key | Path], Fun, Map) when is_function(Fun, 1) ->
-    maps:update(Key, get_and_update(Path, Fun, maps:get(Key, Map, #{})), Map).
 
 %%%=============================================================================
 %%% Test
@@ -126,20 +126,6 @@ get_3_test() ->
      ?assertEqual("Mike Williams",
                   get([mike, name], the_movie(), "Mike Williams"))].
 
-put_3_test() ->
-    [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
-                    robert => #{name => "Robert Virding", msg => "Hello, Mike"},
-                    mike => #{name => "Mike Williams", msg => "Hello, Robert and Joe"}},
-                  put([mike, name], "Mike Williams", the_movie())),
-     ?assertEqual(#{erlang => "The Movie"},
-                  put([erlang], "The Movie", #{}))].
-
-update_3_test() ->
-    [?assertError({badkey, erlang},
-                  update([erlang], "The Movie", #{})),
-     ?assertEqual(#{erlang => "The Movie"},
-                  update([erlang], "The Movie", #{erlang => ""}))].
-
 get_and_update_3_test() ->
     [?assertError({badkey, erlang},
                   get_and_update([erlang], fun(_) -> error end, #{})),
@@ -153,5 +139,19 @@ get_and_update_3_test() ->
                   get_and_update([erlang, the, movie],
                                  fun("") -> "The Movie" end,
                                  #{erlang => #{the => #{movie => ""}}}))].
+
+put_3_test() ->
+    [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
+                    robert => #{name => "Robert Virding", msg => "Hello, Mike"},
+                    mike => #{name => "Mike Williams", msg => "Hello, Robert and Joe"}},
+                  put([mike, name], "Mike Williams", the_movie())),
+     ?assertEqual(#{erlang => "The Movie"},
+                  put([erlang], "The Movie", #{}))].
+
+update_3_test() ->
+    [?assertError({badkey, erlang},
+                  update([erlang], "The Movie", #{})),
+     ?assertEqual(#{erlang => "The Movie"},
+                  update([erlang], "The Movie", #{erlang => ""}))].
 
 -endif.
