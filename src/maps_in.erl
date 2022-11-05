@@ -7,7 +7,7 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([get/2, get/3, get_and_update/3, keys/2, put/3, update/3]).
+-export([get/2, get/3, get_and_update/3, is_key/3, keys/2, put/3, update/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -60,6 +60,18 @@ get_and_update([Key], Fun, Map) when is_function(Fun, 1) ->
     maps:update(Key, Fun(maps:get(Key, Map)), Map);
 get_and_update([Key | Path], Fun, Map) when is_function(Fun, 1) ->
     maps:update(Key, get_and_update(Path, Fun, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
+%% @doc is_key/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec is_key(Key, Path, Map) -> boolean() when
+    Key :: term(),
+    Path :: [term()],
+    Map :: map().
+
+is_key(Key, Path, Map) ->
+    lists:member(Key, keys(Path, Map)).
 
 %%------------------------------------------------------------------------------
 %% @doc keys/2.
@@ -157,6 +169,13 @@ keys_2_test() ->
                                                                 robert => "Robert",
                                                                 mike => "Mike"}}}),
     ?assert(lists:all(fun(K) -> lists:member(K, Keys) end, Keys)).
+
+is_key_3_test() ->
+    Map = #{erlang => #{creators => #{joe => "Joe",
+                                      robert => "Robert",
+                                      mike => "Mike"}}},
+    [?assert(is_key(joe, [erlang, creators], Map)),
+     ?assertNot(is_key(jose, [erlang, creators], Map))].
 
 put_3_test() ->
     [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
