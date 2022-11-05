@@ -53,49 +53,39 @@ get_and_update_in([Key | Path], Fun, Map) ->
 -ifdef(TEST).
 
 the_movie() ->
-    #{
-        joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
-        robert => #{name => "Robert Virding", msg => "Hello, Mike"},
-        mike => #{msg => "Hello, Robert and Joe"}
-    }.
+    #{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
+      robert => #{name => "Robert Virding", msg => "Hello, Mike"},
+      mike => #{msg => "Hello, Robert and Joe"}}.
 
 get_in_test() ->
-    [
-        ?assertEqual(#{name => "Joe Armstrong", msg => "Hello, Robert"},
-                     get_in([joe], the_movie())),
-        ?assertEqual("Hello, Mike",
-                     get_in([robert, msg], the_movie())),
-        ?assertError({badkey, name},
-                     get_in([mike, name], the_movie())),
-        ?assertError({badmap, "Hello, Robert and Joe"},
-                     get_in([mike, msg, hello], the_movie()))
-    ].
+    [?assertEqual(#{name => "Joe Armstrong", msg => "Hello, Robert"},
+                  get_in([joe], the_movie())),
+     ?assertEqual("Hello, Mike",
+                  get_in([robert, msg], the_movie())),
+     ?assertError({badkey, name},
+                  get_in([mike, name], the_movie())),
+     ?assertError({badmap, "Hello, Robert and Joe"},
+                  get_in([mike, msg, hello], the_movie()))].
 
 put_in_test() ->
-    [
-        ?assertEqual(#{name => "Mike Williams", msg => "Hello, Robert and Joe"},
-                     put_in([mike, name], "Mike Williams", the_movie())),
-        ?assertEqual(#{erlang => "The Movie"},
-                     put_in([erlang], "The Movie", #{}))
-    ].
+    [?assertEqual(#{name => "Mike Williams", msg => "Hello, Robert and Joe"},
+                  put_in([mike, name], "Mike Williams", the_movie())),
+     ?assertEqual(#{erlang => "The Movie"},
+                  put_in([erlang], "The Movie", #{}))].
 
 update_in_test() ->
-    [
-        ?assertError({badkey, erlang},
-                     update_in([erlang], "The Movie", #{})),
-        ?assertEqual(#{erlang => "The Movie"},
-                     update_in([erlang], "The Movie", #{erlang => ""}))
-    ].
+    [?assertError({badkey, erlang},
+                  update_in([erlang], "The Movie", #{})),
+     ?assertEqual(#{erlang => "The Movie"},
+                  update_in([erlang], "The Movie", #{erlang => ""}))].
 
 get_and_update_in_test() ->
-    [
-        ?assertError({badkey, erlang},
-                     get_and_update_in([erlang], "The Movie", #{})),
-        ?assertError(function_clause,
-                     get_and_update_in([erlang], "The Movie", #{erlang => ""})),
-        ?assertEqual(#{erlang => "The Movie"},
-                     get_and_update_in([erlang], fun("") -> "The Movie" end, #{erlang => ""}))
-
-    ].
+    [?assertError({badkey, erlang},
+                  get_and_update_in([erlang], "The Movie", #{})),
+     ?assertError(function_clause,
+                  get_and_update_in([erlang], "The Movie", #{erlang => ""})),
+     ?assertEqual(#{erlang => "The Movie"},
+                  get_and_update_in([erlang], fun("") -> "The Movie" end,
+                                    #{erlang => ""}))].
 
 -endif.
