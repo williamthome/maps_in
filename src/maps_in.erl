@@ -2,12 +2,12 @@
 %%% @doc Module to handle nested maps.
 %%%
 %%% @author William Fank Thomé [https://github.com/williamthome]
-%%% @todo docs
+%%% @todo improve docs and tests
 %%% @end
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([get/2, get/3, get_and_update/3, put/3, update/3]).
+-export([get/2, get/3, get_and_update/3, keys/2, put/3, update/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -60,6 +60,18 @@ get_and_update([Key], Fun, Map) when is_function(Fun, 1) ->
     maps:update(Key, Fun(maps:get(Key, Map)), Map);
 get_and_update([Key | Path], Fun, Map) when is_function(Fun, 1) ->
     maps:update(Key, get_and_update(Path, Fun, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
+%% @doc keys/2.
+%% @end
+%%------------------------------------------------------------------------------
+-spec keys(Path, Map) -> Keys when
+    Path :: [term()],
+    Map :: map(),
+    Keys :: [term()].
+
+keys(Path, Map) ->
+    maps:keys(get(Path, Map)).
 
 %%------------------------------------------------------------------------------
 %% @doc put/3.
@@ -139,6 +151,12 @@ get_and_update_3_test() ->
                   get_and_update([erlang, the, movie],
                                  fun("") -> "The Movie" end,
                                  #{erlang => #{the => #{movie => ""}}}))].
+
+keys_2_test() ->
+    Keys = keys([erlang, creators], #{erlang => #{creators => #{joe => "Joe",
+                                                                robert => "Robert",
+                                                                mike => "Mike"}}}),
+    ?assert(lists:all(fun(K) -> lists:member(K, Keys) end, Keys)).
 
 put_3_test() ->
     [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
