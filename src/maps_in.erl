@@ -1,6 +1,6 @@
 -module(maps_in).
 
--export([get_in/2, put_in/3, update_in/3]).
+-export([get_in/2, put_in/3, update_in/3, get_and_update_in/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -38,6 +38,18 @@ update_in([Key], Value, Map) ->
 update_in([Key | Path], Value, Map) ->
     update_in(Path, Value, maps:get(Key, Map)).
 
+-spec get_and_update_in(Path, Fun, Map1) -> Map2 when
+    Path :: [term()],
+    Fun :: fun((term()) -> term()),
+    Map1 :: map(),
+    Map2 :: map().
+
+get_and_update_in([Key], Fun, Map) when is_function(Fun, 1) ->
+    Value = maps:get(Key, Map),
+    maps:update(Key, Fun(Value), Map);
+get_and_update_in([Key | Path], Fun, Map) ->
+    get_and_update_in(Path, Fun, maps:get(Key, Map)).
+
 -ifdef(TEST).
 
 the_movie() ->
@@ -73,6 +85,17 @@ update_in_test() ->
                      update_in([erlang], "The Movie", #{})),
         ?assertEqual(#{erlang => "The Movie"},
                      update_in([erlang], "The Movie", #{erlang => ""}))
+    ].
+
+get_and_update_in_test() ->
+    [
+        ?assertError({badkey, erlang},
+                     get_and_update_in([erlang], "The Movie", #{})),
+        ?assertError(function_clause,
+                     get_and_update_in([erlang], "The Movie", #{erlang => ""})),
+        ?assertEqual(#{erlang => "The Movie"},
+                     get_and_update_in([erlang], fun("") -> "The Movie" end, #{erlang => ""}))
+
     ].
 
 -endif.
