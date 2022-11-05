@@ -1,6 +1,6 @@
 -module(maps_in).
 
--export([get_in/2, put_in/3, update_in/3, get_and_update_in/3]).
+-export([get_in/2, get_in/3, put_in/3, update_in/3, get_and_update_in/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -15,6 +15,17 @@ get_in([Key], Map) ->
     maps:get(Key, Map);
 get_in([Key | Path], Map) ->
     get_in(Path, maps:get(Key, Map)).
+
+-spec get_in(Path, Map, Default) -> Value | Default when
+    Path :: [term()],
+    Map :: map(),
+    Default :: term(),
+    Value :: term().
+
+get_in([Key], Map, Default) ->
+    maps:get(Key, Map, Default);
+get_in([Key | Path], Map, Default) ->
+    get_in(Path, maps:get(Key, Map), Default).
 
 -spec put_in(Path, Value, Map1) -> Map2 when
     Path :: [term()],
@@ -57,7 +68,7 @@ the_movie() ->
       robert => #{name => "Robert Virding", msg => "Hello, Mike"},
       mike => #{msg => "Hello, Robert and Joe"}}.
 
-get_in_test() ->
+get_in_2_test() ->
     [?assertEqual(#{name => "Joe Armstrong", msg => "Hello, Robert"},
                   get_in([joe], the_movie())),
      ?assertEqual("Hello, Mike",
@@ -66,6 +77,12 @@ get_in_test() ->
                   get_in([mike, name], the_movie())),
      ?assertError({badmap, "Hello, Robert and Joe"},
                   get_in([mike, msg, hello], the_movie()))].
+
+get_in_3_test() ->
+    [?assertEqual("Hello, Mike",
+                  get_in([robert, msg], the_movie(), "Hello, Joe")),
+     ?assertEqual("Mike Williams",
+                  get_in([mike, name], the_movie(), "Mike Williams"))].
 
 put_in_test() ->
     [?assertEqual(#{name => "Mike Williams", msg => "Hello, Robert and Joe"},
