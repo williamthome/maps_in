@@ -89,9 +89,7 @@ update([], Map, _) ->
 get_and_update([Key], Fun, Map) when is_function(Fun, 1) ->
     maps:update(Key, Fun(maps:get(Key, Map)), Map);
 get_and_update([Key | Path], Fun, Map) when is_function(Fun, 1) ->
-    maps:update(Key, get_and_update(Path, Fun, maps:get(Key, Map, #{})), Map);
-get_and_update([], Map, _) ->
-    Map.
+    maps:update(Key, get_and_update(Path, Fun, maps:get(Key, Map, #{})), Map).
 
 %%%=============================================================================
 %%% Test
