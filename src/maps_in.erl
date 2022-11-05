@@ -165,10 +165,11 @@ get_and_update_3_test() ->
                                  #{erlang => #{the => #{movie => ""}}}))].
 
 keys_2_test() ->
-    Keys = keys([erlang, creators], #{erlang => #{creators => #{joe => "Joe",
-                                                                robert => "Robert",
-                                                                mike => "Mike"}}}),
-    ?assert(lists:all(fun(K) -> lists:member(K, Keys) end, Keys)).
+    Map = #{erlang => #{creators => #{joe => "Joe",
+                                      robert => "Robert",
+                                      mike => "Mike"}}},
+    Keys = keys([erlang, creators], Map),
+    ?assert(lists:all(fun(K) -> lists:member(K, Keys) end, [joe, robert, mike])).
 
 is_key_3_test() ->
     Map = #{erlang => #{creators => #{joe => "Joe",
