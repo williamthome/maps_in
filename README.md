@@ -36,21 +36,21 @@ default
 ### put/3
 
 ```erlang
-1> Map = #{my => #{deep => #{}}}.
-#{my => #{deep => #{}}}
-2> maps_in:put([my, deep], #{nested => map}, Map).
-#{my => #{deep => #{nested => map}}}
+1> Map = #{my => #{more => #{deep => #{}}}}.
+#{my => #{more => #{deep => #{}}}}
+2> maps_in:put([my, more, deep], #{nested => map}, Map).
+#{my => #{more => #{deep => #{nested => map}}}}
 ```
 
 ### update/3
 
 ```erlang
-1> Map = #{my => #{deep => #{}}}.
-#{my => #{deep => #{}}}
+1> Map = #{my => #{more => #{deep => #{}}}}.
+#{my => #{more => #{deep => #{}}}}
 2> maps_in:update([my, unknown_key], error, Map).
 ** exception error: bad key: unknown_key
-3> maps_in:update([my, deep], #{nested => map}, Map).
-#{my => #{deep => #{nested => map}}}
+3> maps_in:update([my, more, deep], #{nested => map}, Map).
+#{my => #{more => #{deep => #{nested => map}}}}
 ```
 
 ### get_and_update/3

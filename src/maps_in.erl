@@ -56,10 +56,10 @@ get([Key | Path], Map, Default) ->
     Map1 :: map(),
     Map2 :: map().
 
-put([Key], Value, Map) ->
-    maps:put(Key, Value, Map);
 put([Key | Path], Value, Map) ->
-    put(Path, Value, maps:get(Key, Map)).
+    maps:put(Key, put(Path, Value, maps:get(Key, Map, #{})), Map);
+put([], Map, _) ->
+    Map.
 
 %%------------------------------------------------------------------------------
 %% @doc update/3.
@@ -71,10 +71,10 @@ put([Key | Path], Value, Map) ->
     Map1 :: map(),
     Map2 :: map().
 
-update([Key], Value, Map) ->
-    maps:update(Key, Value, Map);
 update([Key | Path], Value, Map) ->
-    update(Path, Value, maps:get(Key, Map)).
+    maps:update(Key, update(Path, Value, maps:get(Key, Map, #{})), Map);
+update([], Map, _) ->
+    Map.
 
 %%------------------------------------------------------------------------------
 %% @doc get_and_update/3.
@@ -87,10 +87,11 @@ update([Key | Path], Value, Map) ->
     Map2 :: map().
 
 get_and_update([Key], Fun, Map) when is_function(Fun, 1) ->
-    Value = maps:get(Key, Map),
-    maps:update(Key, Fun(Value), Map);
-get_and_update([Key | Path], Fun, Map) ->
-    get_and_update(Path, Fun, maps:get(Key, Map)).
+    maps:update(Key, Fun(maps:get(Key, Map)), Map);
+get_and_update([Key | Path], Fun, Map) when is_function(Fun, 1) ->
+    maps:update(Key, get_and_update(Path, Fun, maps:get(Key, Map, #{})), Map);
+get_and_update([], Map, _) ->
+    Map.
 
 %%%=============================================================================
 %%% Test
@@ -128,7 +129,9 @@ get_3_test() ->
                   get([mike, name], the_movie(), "Mike Williams"))].
 
 put_3_test() ->
-    [?assertEqual(#{name => "Mike Williams", msg => "Hello, Robert and Joe"},
+    [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
+                    robert => #{name => "Robert Virding", msg => "Hello, Mike"},
+                    mike => #{name => "Mike Williams", msg => "Hello, Robert and Joe"}},
                   put([mike, name], "Mike Williams", the_movie())),
      ?assertEqual(#{erlang => "The Movie"},
                   put([erlang], "The Movie", #{}))].
@@ -141,12 +144,16 @@ update_3_test() ->
 
 get_and_update_3_test() ->
     [?assertError({badkey, erlang},
-                  get_and_update([erlang], "The Movie", #{})),
+                  get_and_update([erlang], fun(_) -> error end, #{})),
      ?assertError(function_clause,
                   get_and_update([erlang], "The Movie", #{erlang => ""})),
      ?assertEqual(#{erlang => "The Movie"},
                   get_and_update([erlang],
                                  fun("") -> "The Movie" end,
-                                 #{erlang => ""}))].
+                                 #{erlang => ""})),
+     ?assertEqual(#{erlang => #{the => #{movie => "The Movie"}}},
+                  get_and_update([erlang, the, movie],
+                                 fun("") -> "The Movie" end,
+                                 #{erlang => #{the => #{movie => ""}}}))].
 
 -endif.
