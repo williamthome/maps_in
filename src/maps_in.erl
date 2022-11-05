@@ -7,7 +7,8 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([get/2, get/3, get_and_update/3, is_key/3, keys/2, put/3, update/3]).
+-export([get/2, get/3, get_and_update/3, is_key/3, keys/2, map/3, put/3,
+         update/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -84,6 +85,21 @@ is_key(Key, Path, Map) ->
 
 keys(Path, Map) ->
     maps:keys(get(Path, Map)).
+
+%%------------------------------------------------------------------------------
+%% @doc map/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec map(Path, Fun, Map1) -> Map2 when
+    Path :: [term()],
+    Fun :: fun((term(), term()) -> term()),
+    Map1 :: map(),
+    Map2 :: map().
+
+map([Key], Fun, Map) when is_function(Fun, 2) ->
+    maps:update(Key, maps:map(Fun, maps:get(Key, Map)), Map);
+map([Key | Path], Fun, Map) when is_function(Fun, 2) ->
+    maps:update(Key, map(Path, Fun, maps:get(Key, Map, #{})), Map).
 
 %%------------------------------------------------------------------------------
 %% @doc put/3.
@@ -177,6 +193,18 @@ is_key_3_test() ->
                                       mike => "Mike"}}},
     [?assert(is_key(joe, [erlang, creators], Map)),
      ?assertNot(is_key(jose, [erlang, creators], Map))].
+
+map_3_test() ->
+    Map = #{erlang => #{creators => #{joe => "Joe",
+                                      robert => "Robert",
+                                      mike => "Mike"}}},
+    Fun = fun(joe, Joe) -> Joe ++ " Armstrong";
+             (robert, Robert) -> Robert ++ " Virding";
+             (mike, Mike) -> Mike ++ " Williams" end,
+    ?assertEqual(#{erlang => #{creators => #{joe => "Joe Armstrong",
+                                             robert => "Robert Virding",
+                                             mike => "Mike Williams"}}},
+                 map([erlang, creators], Fun, Map)).
 
 put_3_test() ->
     [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
