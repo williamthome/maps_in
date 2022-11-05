@@ -23,3 +23,5 @@ jobs:
       run: rebar3 dialyzer
     - name: Run tests
       run: rebar3 do eunit, ct
+    - name: Run cover
+      run: rebar3 cover --verbose
