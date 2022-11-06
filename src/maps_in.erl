@@ -7,7 +7,7 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([filter/3, filtermap/3, find/3,
+-export([filter/3, filtermap/3, find/3, fold/4,
          get/2, get/3, is_key/3, keys/2,
          map/3, put/3, remove/3, size/2, to_list/2,
          update/3, update_with/3, update_with/4,
@@ -62,6 +62,21 @@ filtermap([Key | Path], Fun, Map) ->
 
 find(Key, Path, Map) ->
     maps:find(Key, get(Path, Map)).
+
+%%------------------------------------------------------------------------------
+%% @doc fold/4.
+%% @end
+%%------------------------------------------------------------------------------
+-spec fold(Fun, Init, Path, Map) -> Acc when
+    Fun :: fun((Key, Value, AccIn) -> AccOut),
+    Init :: term(),
+    Path :: [term()],
+    Acc :: AccOut,
+    AccIn :: Init | AccOut,
+    Map :: #{Key => Value}.
+
+fold(Fun, Init, Path, Map) ->
+    maps:fold(Fun, Init, get(Path, Map)).
 
 %%------------------------------------------------------------------------------
 %% @doc get/2.
@@ -307,6 +322,11 @@ filtermap_3_test() ->
 find_3_test() ->
     [?assertEqual({ok, "Joe"}, find(joe, [erlang, creators], erlang_creators())),
      ?assertEqual(error, find(jose, [erlang, creators], erlang_creators()))].
+
+fold_4_test() ->
+    Fold = fold(fun(K, _, Acc) -> [K | Acc] end, [],
+                [erlang, creators], erlang_creators()),
+    ?assert(lists:all(fun(C) -> lists:member(C, Fold) end, [joe, robert, mike])).
 
 get_2_test() ->
     [?assertEqual(#{name => "Joe Armstrong", msg => "Hello, Robert"},
