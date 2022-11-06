@@ -7,7 +7,8 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([filter/3, filtermap/3, get/2, get/3, is_key/3, keys/2,
+-export([filter/3, filtermap/3, find/3,
+         get/2, get/3, is_key/3, keys/2,
          map/3, put/3, remove/3, size/2, to_list/2,
          update/3, update_with/3, update_with/4,
          values/2, with/3, without/3]).
@@ -49,6 +50,18 @@ filtermap([Key], Fun, Map) ->
     maps:update(Key, maps:filtermap(Fun, maps:get(Key, Map)), Map);
 filtermap([Key | Path], Fun, Map) ->
     maps:update(Key, filtermap(Path, Fun, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
+%% @doc find/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec find(Key, Path, Map) -> {ok, Value} | error when
+    Key :: term(),
+    Path :: [term()],
+    Map :: #{Key => Value, _ => _}.
+
+find(Key, Path, Map) ->
+    maps:find(Key, get(Path, Map)).
 
 %%------------------------------------------------------------------------------
 %% @doc get/2.
@@ -290,6 +303,10 @@ filtermap_3_test() ->
              (_, V) -> (V rem 2) =:= 0 end,
     ?assertEqual(#{erlang => #{example => #{k1 => 2, "k2" => 2}}},
                  filtermap([erlang, example], Fun, Map)).
+
+find_3_test() ->
+    [?assertEqual({ok, "Joe"}, find(joe, [erlang, creators], erlang_creators())),
+     ?assertEqual(error, find(jose, [erlang, creators], erlang_creators()))].
 
 get_2_test() ->
     [?assertEqual(#{name => "Joe Armstrong", msg => "Hello, Robert"},
