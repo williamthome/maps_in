@@ -7,7 +7,7 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([filter/3, get/2, get/3, is_key/3, keys/2,
+-export([filter/3, filtermap/3, get/2, get/3, is_key/3, keys/2,
          map/3, put/3, remove/3, size/2, to_list/2,
          update/3, update_with/3, update_with/4,
          values/2, with/3, without/3]).
@@ -34,6 +34,21 @@ filter([Key], Pred, Map) ->
     maps:update(Key, maps:filter(Pred, maps:get(Key, Map)), Map);
 filter([Key | Path], Pred, Map) ->
     maps:update(Key, filter(Path, Pred, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
+%% @doc filtermap/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec filtermap(Path, Fun, Map1) -> Map2 when
+    Path :: [term()],
+    Fun :: fun((term(), term()) -> boolean() | {true, term()}),
+    Map1 :: map(),
+    Map2 :: map().
+
+filtermap([Key], Fun, Map) ->
+    maps:update(Key, maps:filtermap(Fun, maps:get(Key, Map)), Map);
+filtermap([Key | Path], Fun, Map) ->
+    maps:update(Key, filtermap(Path, Fun, maps:get(Key, Map, #{})), Map).
 
 %%------------------------------------------------------------------------------
 %% @doc get/2.
@@ -268,6 +283,13 @@ filter_3_test() ->
     Pred = fun(K, V) -> is_atom(K) andalso (V rem 2) =:= 0 end,
     ?assertEqual(#{erlang => #{example => #{a => 2, c => 4}}},
                  filter([erlang, example], Pred, Map)).
+
+filtermap_3_test() ->
+    Map = #{erlang => #{example => #{k1 => 1, "k2" => 2, "k3" => 3}}},
+    Fun = fun(K, V) when is_atom(K) -> {true, V * 2};
+             (_, V) -> (V rem 2) =:= 0 end,
+    ?assertEqual(#{erlang => #{example => #{k1 => 2, "k2" => 2}}},
+                 filtermap([erlang, example], Fun, Map)).
 
 get_2_test() ->
     [?assertEqual(#{name => "Joe Armstrong", msg => "Hello, Robert"},
