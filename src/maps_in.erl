@@ -8,7 +8,7 @@
 -module(maps_in).
 
 -export([get/2, get/3, get_and_update/3, is_key/3, keys/2, map/3, put/3,
-         update/3]).
+         remove/3, update/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -117,6 +117,21 @@ put([], Map, _) ->
     Map.
 
 %%------------------------------------------------------------------------------
+%% @doc remove/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec remove(Key, Path, Map1) -> Map2 when
+    Key :: term(),
+    Path :: [term()],
+    Map1 :: map(),
+    Map2 :: map().
+
+remove(KeyRem, [Key], Map) ->
+    maps:update(Key, maps:remove(KeyRem, maps:get(Key, Map)), Map);
+remove(KeyRem, [Key | Path], Map) ->
+    maps:update(Key, remove(KeyRem, Path, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
 %% @doc update/3.
 %% @end
 %%------------------------------------------------------------------------------
@@ -213,6 +228,11 @@ put_3_test() ->
                   put([mike, name], "Mike Williams", the_movie())),
      ?assertEqual(#{erlang => "The Movie"},
                   put([erlang], "The Movie", #{}))].
+
+remove_3_test() ->
+    Map = #{this => #{should => #{be => #{ok => ok, removed => removed}}}},
+    ?assertEqual(#{this => #{should => #{be => #{ok => ok}}}},
+                 remove(removed, [this, should, be], Map)).
 
 update_3_test() ->
     [?assertError({badkey, erlang},
