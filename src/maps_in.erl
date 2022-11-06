@@ -8,7 +8,7 @@
 -module(maps_in).
 
 -export([filter/3, filtermap/3, find/3, fold/4,
-         get/2, get/3, is_key/3, keys/2,
+         foreach/3, get/2, get/3, is_key/3, keys/2,
          map/3, put/3, remove/3, size/2, to_list/2,
          update/3, update_with/3, update_with/4,
          values/2, with/3, without/3]).
@@ -77,6 +77,18 @@ find(Key, Path, Map) ->
 
 fold(Fun, Init, Path, Map) ->
     maps:fold(Fun, Init, get(Path, Map)).
+
+%%------------------------------------------------------------------------------
+%% @doc foreach/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec foreach(Fun, Path, Map) -> ok when
+    Fun :: fun((Key, Value) -> term()),
+    Path :: [term()],
+    Map :: #{Key => Value}.
+
+foreach(Fun, Path, Map) ->
+    maps:foreach(Fun, get(Path, Map)).
 
 %%------------------------------------------------------------------------------
 %% @doc get/2.
@@ -327,6 +339,9 @@ fold_4_test() ->
     Fold = fold(fun(K, _, Acc) -> [K | Acc] end, [],
                 [erlang, creators], erlang_creators()),
     ?assert(lists:all(fun(C) -> lists:member(C, Fold) end, [joe, robert, mike])).
+
+foreach_3_test() ->
+    ?assertEqual(ok, foreach(fun(_, _) -> ok end, [erlang, creators], erlang_creators())).
 
 get_2_test() ->
     [?assertEqual(#{name => "Joe Armstrong", msg => "Hello, Robert"},
