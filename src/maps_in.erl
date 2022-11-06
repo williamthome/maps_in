@@ -17,6 +17,10 @@
 -export([filtermap/3]).
 -endif.
 
+-if(?OTP_RELEASE >= 21).
+-export([iterator/2]).
+-endif.
+
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
 -endif.
@@ -138,6 +142,22 @@ get([Key | Path], Map, Default) ->
 
 is_key(Key, Path, Map) ->
     lists:member(Key, keys(Path, Map)).
+
+-if(?OTP_RELEASE >= 21).
+
+%%------------------------------------------------------------------------------
+%% @doc iterator/2.
+%% @end
+%%------------------------------------------------------------------------------
+-spec iterator(Path, Map) -> Iterator when
+    Path :: [term()],
+    Map :: map(),
+    Iterator :: maps:iterator().
+
+iterator(Path, Map) ->
+    maps:iterator(get(Path, Map)).
+
+-endif.
 
 %%------------------------------------------------------------------------------
 %% @doc keys/2.
@@ -378,6 +398,14 @@ keys_2_test() ->
 is_key_3_test() ->
     [?assert(is_key(joe, [erlang, creators], erlang_creators())),
      ?assertNot(is_key(jose, [erlang, creators], erlang_creators()))].
+
+-if(?OTP_RELEASE >= 21).
+
+iterator_2_test() ->
+    Map = #{erlang => #{example => #{a => 1, b => 2}}},
+    ?assertEqual([0 | #{a => 1, b => 2}], iterator([erlang, example], Map)).
+
+-endif.
 
 map_3_test() ->
     Fun = fun(joe, Joe) -> Joe ++ " Armstrong";
