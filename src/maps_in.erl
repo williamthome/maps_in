@@ -81,9 +81,9 @@ keys(Path, Map) ->
     Map1 :: map(),
     Map2 :: map().
 
-map([Key], Fun, Map) when is_function(Fun, 2) ->
+map([Key], Fun, Map) ->
     maps:update(Key, maps:map(Fun, maps:get(Key, Map)), Map);
-map([Key | Path], Fun, Map) when is_function(Fun, 2) ->
+map([Key | Path], Fun, Map) ->
     maps:update(Key, map(Path, Fun, maps:get(Key, Map, #{})), Map).
 
 %%------------------------------------------------------------------------------
@@ -152,9 +152,9 @@ update([], Map, _) ->
     Map1 :: map(),
     Map2 :: map().
 
-update_with([Key], Fun, Map) when is_function(Fun, 1) ->
+update_with([Key], Fun, Map) ->
     maps:update_with(Key, Fun, Map);
-update_with([Key | Path], Fun, Map) when is_function(Fun, 1) ->
+update_with([Key | Path], Fun, Map) ->
     maps:update(Key, update_with(Path, Fun, maps:get(Key, Map, #{})), Map).
 
 %%------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ update_3_test() ->
 update_with_3_test() ->
     [?assertError({badkey, erlang},
                   update_with([erlang], fun(_) -> error end, #{})),
-     ?assertError(function_clause,
+     ?assertError(badarg,
                   update_with([erlang], "The Movie", #{erlang => ""})),
      ?assertEqual(#{erlang => "The Movie"},
                   update_with([erlang],
