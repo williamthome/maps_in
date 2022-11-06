@@ -8,7 +8,7 @@
 -module(maps_in).
 
 -export([get/2, get/3, get_and_update/3, is_key/3, keys/2, map/3, put/3,
-         remove/3, size/2, update/3, values/2, with/3]).
+         remove/3, size/2, update/3, values/2, with/3, without/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -182,6 +182,19 @@ values(Path, Map) ->
 with(Keys, Path, Map) ->
     maps:with(Keys, get(Path, Map)).
 
+%%------------------------------------------------------------------------------
+%% @doc without/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec without(Keys, Path, Map1) -> Map2 when
+    Keys :: [term()],
+    Path :: [term()],
+    Map1 :: map(),
+    Map2 :: map().
+
+without(Keys, Path, Map) ->
+    maps:without(Keys, get(Path, Map)).
+
 %%%=============================================================================
 %%% Test
 %%%=============================================================================
@@ -281,5 +294,9 @@ values_2_test() ->
 
 with_3_test() ->
     ?assertEqual(#{joe => "Joe"}, with([joe], [erlang, creators], erlang_creators())).
+
+without_3_test() ->
+    ?assertEqual(#{robert => "Robert", mike => "Mike"},
+                 without([joe], [erlang, creators], erlang_creators())).
 
 -endif.
