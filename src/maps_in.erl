@@ -13,12 +13,12 @@
          update/3, update_with/3, update_with/4,
          values/2, with/3, without/3]).
 
--if(?OTP_RELEASE >= 24).
--export([filtermap/3, merge_with/4]).
--endif.
-
 -if(?OTP_RELEASE >= 21).
 -export([iterator/2]).
+-endif.
+
+-if(?OTP_RELEASE >= 24).
+-export([filtermap/3, merge_with/4]).
 -endif.
 
 -ifdef(TEST).
