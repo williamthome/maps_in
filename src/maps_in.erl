@@ -7,8 +7,10 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([get/2, get/3, is_key/3, keys/2, map/3, put/3, remove/3, size/2,
-         update/3, update_with/3, update_with/4, values/2, with/3, without/3]).
+-export([get/2, get/3, is_key/3, keys/2,
+         map/3, put/3, remove/3, size/2, to_list/2,
+         update/3, update_with/3, update_with/4,
+         values/2, with/3, without/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -126,6 +128,17 @@ remove(KeyRem, [Key | Path], Map) ->
 
 size(Path, Map) ->
     maps:size(get(Path, Map)).
+
+%%------------------------------------------------------------------------------
+%% @doc to_list/2.
+%% @end
+%%------------------------------------------------------------------------------
+-spec to_list(Path, Map) -> [{Key, Value}] when
+    Path :: [term()],
+    Map :: #{Key => Value}.
+
+to_list(Path, Map) ->
+    maps:to_list(get(Path, Map)).
 
 %%------------------------------------------------------------------------------
 %% @doc update/3.
@@ -283,6 +296,11 @@ remove_3_test() ->
 
 size_2_test() ->
     ?assertEqual(3, size([erlang, creators], erlang_creators())).
+
+to_list_2_test() ->
+    List = to_list([erlang, creators], erlang_creators()),
+    ?assert(lists:all(fun(C) -> lists:member(C, List) end,
+            [{joe, "Joe"}, {robert, "Robert"}, {mike, "Mike"}])).
 
 update_3_test() ->
     [?assertError({badkey, erlang},
