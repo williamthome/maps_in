@@ -9,9 +9,9 @@
 
 -export([filter/3, find/3, fold/4, foreach/3,
          get/2, get/3, is_key/3, keys/2, map/3,
-         merge/3, put/3, remove/3, size/2, to_list/2,
-         update/3, update_with/3, update_with/4,
-         values/2, with/3, without/3]).
+         merge/3, put/3, remove/3, size/2, take/3,
+         to_list/2, update/3, update_with/3,
+         update_with/4, values/2, with/3, without/3]).
 
 -if(?OTP_RELEASE >= 21).
 -export([iterator/2]).
@@ -263,6 +263,20 @@ size(Path, Map) ->
     maps:size(get(Path, Map)).
 
 %%------------------------------------------------------------------------------
+%% @doc take/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec take(Key, Path, Map1) -> {Value, Map2} | error when
+    Key :: term(),
+    Path :: [term()],
+    Map1 :: map(),
+    Value :: term(),
+    Map2 :: map().
+
+take(Key, Path, Map) ->
+    maps:take(Key, get(Path, Map)).
+
+%%------------------------------------------------------------------------------
 %% @doc to_list/2.
 %% @end
 %%------------------------------------------------------------------------------
@@ -483,6 +497,11 @@ remove_3_test() ->
 
 size_2_test() ->
     ?assertEqual(3, size([erlang, creators], erlang_creators())).
+
+take_3_test() ->
+    Map = #{erlang => #{example => #{"a" => "hello", "b" => "world"}}},
+    [?assertEqual({"hello",#{"b" => "world"}}, take("a", [erlang, example], Map)),
+     ?assertEqual(error, take("does not exist", [erlang, example], Map))].
 
 to_list_2_test() ->
     List = to_list([erlang, creators], erlang_creators()),
