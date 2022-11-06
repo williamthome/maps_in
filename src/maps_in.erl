@@ -7,11 +7,15 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([filter/3, filtermap/3, find/3, fold/4,
-         foreach/3, get/2, get/3, is_key/3, keys/2,
+-export([filter/3, find/3, fold/4, foreach/3,
+         get/2, get/3, is_key/3, keys/2,
          map/3, put/3, remove/3, size/2, to_list/2,
          update/3, update_with/3, update_with/4,
          values/2, with/3, without/3]).
+
+-if(?OTP_RELEASE >= 24).
+-export([filtermap/3]).
+-endif.
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -36,6 +40,8 @@ filter([Key], Pred, Map) ->
 filter([Key | Path], Pred, Map) ->
     maps:update(Key, filter(Path, Pred, maps:get(Key, Map, #{})), Map).
 
+-if(?OTP_RELEASE >= 24).
+
 %%------------------------------------------------------------------------------
 %% @doc filtermap/3.
 %% @end
@@ -50,6 +56,8 @@ filtermap([Key], Fun, Map) ->
     maps:update(Key, maps:filtermap(Fun, maps:get(Key, Map)), Map);
 filtermap([Key | Path], Fun, Map) ->
     maps:update(Key, filtermap(Path, Fun, maps:get(Key, Map, #{})), Map).
+
+-endif.
 
 %%------------------------------------------------------------------------------
 %% @doc find/3.
@@ -324,12 +332,16 @@ filter_3_test() ->
     ?assertEqual(#{erlang => #{example => #{a => 2, c => 4}}},
                  filter([erlang, example], Pred, Map)).
 
+-if(?OTP_RELEASE >= 24).
+
 filtermap_3_test() ->
     Map = #{erlang => #{example => #{k1 => 1, "k2" => 2, "k3" => 3}}},
     Fun = fun(K, V) when is_atom(K) -> {true, V * 2};
              (_, V) -> (V rem 2) =:= 0 end,
     ?assertEqual(#{erlang => #{example => #{k1 => 2, "k2" => 2}}},
                  filtermap([erlang, example], Fun, Map)).
+
+-endif.
 
 find_3_test() ->
     [?assertEqual({ok, "Joe"}, find(joe, [erlang, creators], erlang_creators())),
