@@ -9,7 +9,7 @@
 
 -export([filter/3, find/3, fold/4, foreach/3,
          get/2, get/3, is_key/3, keys/2,
-         map/3, put/3, remove/3, size/2, to_list/2,
+         map/3, merge/3, put/3, remove/3, size/2, to_list/2,
          update/3, update_with/3, update_with/4,
          values/2, with/3, without/3]).
 
@@ -185,6 +185,21 @@ map([Key], Fun, Map) ->
     maps:update(Key, maps:map(Fun, maps:get(Key, Map)), Map);
 map([Key | Path], Fun, Map) ->
     maps:update(Key, map(Path, Fun, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
+%% @doc merge/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec merge(Map1, Path, Map2) -> Map3 when
+    Map1 :: map(),
+    Path :: [term()],
+    Map2 :: map(),
+    Map3 :: map().
+
+merge(Map1, [Key], Map2) ->
+    maps:update(Key, maps:merge(Map1, maps:get(Key, Map2)), Map2);
+merge(Map1, [Key | Path], Map2) ->
+    maps:update(Key, merge(Map1, Path, maps:get(Key, Map2, #{})), Map2).
 
 %%------------------------------------------------------------------------------
 %% @doc put/3.
@@ -415,6 +430,12 @@ map_3_test() ->
                                              robert => "Robert Virding",
                                              mike => "Mike Williams"}}},
                  map([erlang, creators], Fun, erlang_creators())).
+
+merge_3_test() ->
+    ?assertEqual(erlang_creators(),
+                 merge(get([erlang, creators], erlang_creators()),
+                       [erlang, creators],
+                       #{erlang => #{creators => #{}}})).
 
 put_3_test() ->
     [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
