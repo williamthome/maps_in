@@ -8,13 +8,13 @@
 -module(maps_in).
 
 -export([filter/3, find/3, fold/4, foreach/3,
-         get/2, get/3, is_key/3, keys/2,
-         map/3, merge/3, put/3, remove/3, size/2, to_list/2,
+         get/2, get/3, is_key/3, keys/2, map/3,
+         merge/3, put/3, remove/3, size/2, to_list/2,
          update/3, update_with/3, update_with/4,
          values/2, with/3, without/3]).
 
 -if(?OTP_RELEASE >= 24).
--export([filtermap/3]).
+-export([filtermap/3, merge_with/4]).
 -endif.
 
 -if(?OTP_RELEASE >= 21).
@@ -200,6 +200,26 @@ merge(Map1, [Key], Map2) ->
     maps:update(Key, maps:merge(Map1, maps:get(Key, Map2)), Map2);
 merge(Map1, [Key | Path], Map2) ->
     maps:update(Key, merge(Map1, Path, maps:get(Key, Map2, #{})), Map2).
+
+-if(?OTP_RELEASE >= 24).
+
+%%------------------------------------------------------------------------------
+%% @doc merge_with/4.
+%% @end
+%%------------------------------------------------------------------------------
+-spec merge_with(Combiner, Map1, Path, Map2) -> Map3 when
+    Combiner :: fun((3) -> map()),
+    Map1 :: map(),
+    Path :: [term()],
+    Map2 :: map(),
+    Map3 :: map().
+
+merge_with(Combiner, Map1, [Key], Map2) ->
+    maps:update(Key, maps:merge_with(Combiner, Map1, maps:get(Key, Map2)), Map2);
+merge_with(Combiner, Map1, [Key | Path], Map2) ->
+    maps:update(Key, merge_with(Combiner, Map1, Path, maps:get(Key, Map2, #{})), Map2).
+
+-endif.
 
 %%------------------------------------------------------------------------------
 %% @doc put/3.
@@ -436,6 +456,17 @@ merge_3_test() ->
                  merge(get([erlang, creators], erlang_creators()),
                        [erlang, creators],
                        #{erlang => #{creators => #{}}})).
+
+-if(?OTP_RELEASE >= 24).
+
+merge_with_4_test() ->
+    Map1 = #{a => "value_one", b => "value_two"},
+    Map2 = #{erlang => #{example => #{a => 1, c => 2}}},
+    ?assertEqual(#{erlang => #{example => #{a => {"value_one",1}, b => "value_two", c => 2}}},
+                 merge_with(fun(_Key, Value1, Value2) -> {Value1, Value2} end, Map1,
+                            [erlang, example], Map2)).
+
+-endif.
 
 put_3_test() ->
     [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
