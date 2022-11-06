@@ -8,7 +8,7 @@
 -module(maps_in).
 
 -export([get/2, get/3, get_and_update/3, is_key/3, keys/2, map/3, put/3,
-         remove/3, update/3]).
+         remove/3, size/2, update/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -132,6 +132,17 @@ remove(KeyRem, [Key | Path], Map) ->
     maps:update(Key, remove(KeyRem, Path, maps:get(Key, Map, #{})), Map).
 
 %%------------------------------------------------------------------------------
+%% @doc size/2.
+%% @end
+%%------------------------------------------------------------------------------
+-spec size(Path, Map) -> non_neg_integer() when
+    Path :: [term()],
+    Map :: map().
+
+size(Path, Map) ->
+    maps:size(get(Path, Map)).
+
+%%------------------------------------------------------------------------------
 %% @doc update/3.
 %% @end
 %%------------------------------------------------------------------------------
@@ -160,6 +171,11 @@ the_movie() ->
     #{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
       robert => #{name => "Robert Virding", msg => "Hello, Mike"},
       mike => #{msg => "Hello, Robert and Joe"}}.
+
+erlang_creators() ->
+    #{erlang => #{creators => #{joe => "Joe",
+                                robert => "Robert",
+                                mike => "Mike"}}}.
 
 %%%-----------------------------------------------------------------------------
 %%% Unit tests
@@ -196,30 +212,21 @@ get_and_update_3_test() ->
                                  #{erlang => #{the => #{movie => ""}}}))].
 
 keys_2_test() ->
-    Map = #{erlang => #{creators => #{joe => "Joe",
-                                      robert => "Robert",
-                                      mike => "Mike"}}},
-    Keys = keys([erlang, creators], Map),
+    Keys = keys([erlang, creators], erlang_creators()),
     ?assert(lists:all(fun(K) -> lists:member(K, Keys) end, [joe, robert, mike])).
 
 is_key_3_test() ->
-    Map = #{erlang => #{creators => #{joe => "Joe",
-                                      robert => "Robert",
-                                      mike => "Mike"}}},
-    [?assert(is_key(joe, [erlang, creators], Map)),
-     ?assertNot(is_key(jose, [erlang, creators], Map))].
+    [?assert(is_key(joe, [erlang, creators], erlang_creators())),
+     ?assertNot(is_key(jose, [erlang, creators], erlang_creators()))].
 
 map_3_test() ->
-    Map = #{erlang => #{creators => #{joe => "Joe",
-                                      robert => "Robert",
-                                      mike => "Mike"}}},
     Fun = fun(joe, Joe) -> Joe ++ " Armstrong";
              (robert, Robert) -> Robert ++ " Virding";
              (mike, Mike) -> Mike ++ " Williams" end,
     ?assertEqual(#{erlang => #{creators => #{joe => "Joe Armstrong",
                                              robert => "Robert Virding",
                                              mike => "Mike Williams"}}},
-                 map([erlang, creators], Fun, Map)).
+                 map([erlang, creators], Fun, erlang_creators())).
 
 put_3_test() ->
     [?assertEqual(#{joe => #{name => "Joe Armstrong", msg => "Hello, Robert"},
@@ -233,6 +240,9 @@ remove_3_test() ->
     Map = #{this => #{should => #{be => #{ok => ok, removed => removed}}}},
     ?assertEqual(#{this => #{should => #{be => #{ok => ok}}}},
                  remove(removed, [this, should, be], Map)).
+
+size_2_test() ->
+    ?assertEqual(3, size([erlang, creators], erlang_creators())).
 
 update_3_test() ->
     [?assertError({badkey, erlang},
