@@ -8,7 +8,7 @@
 -module(maps_in).
 
 -export([get/2, get/3, is_key/3, keys/2, map/3, put/3, remove/3, size/2,
-         update/3, update_with/3, values/2, with/3, without/3]).
+         update/3, update_with/3, update_with/4, values/2, with/3, without/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -158,6 +158,22 @@ update_with([Key | Path], Fun, Map) when is_function(Fun, 1) ->
     maps:update(Key, update_with(Path, Fun, maps:get(Key, Map, #{})), Map).
 
 %%------------------------------------------------------------------------------
+%% @doc update_with/4.
+%% @end
+%%------------------------------------------------------------------------------
+-spec update_with(Path, Fun, Init, Map1) -> Map2 when
+    Path :: [term()],
+    Fun :: fun((term()) -> term()),
+    Init :: [term()],
+    Map1 :: map(),
+    Map2 :: map().
+
+update_with([Key], Fun, Init, Map) ->
+    maps:update_with(Key, Fun, Init, Map);
+update_with([Key | Path], Fun, Init, Map) ->
+    maps:update(Key, update_with(Path, Fun, Init, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
 %% @doc values/2.
 %% @end
 %%------------------------------------------------------------------------------
@@ -235,20 +251,6 @@ get_3_test() ->
      ?assertEqual("Mike Williams",
                   get([mike, name], the_movie(), "Mike Williams"))].
 
-update_with_3_test() ->
-    [?assertError({badkey, erlang},
-                  update_with([erlang], fun(_) -> error end, #{})),
-     ?assertError(function_clause,
-                  update_with([erlang], "The Movie", #{erlang => ""})),
-     ?assertEqual(#{erlang => "The Movie"},
-                  update_with([erlang],
-                                 fun("") -> "The Movie" end,
-                                 #{erlang => ""})),
-     ?assertEqual(#{erlang => #{the => #{movie => "The Movie"}}},
-                  update_with([erlang, the, movie],
-                                 fun("") -> "The Movie" end,
-                                 #{erlang => #{the => #{movie => ""}}}))].
-
 keys_2_test() ->
     Keys = keys([erlang, creators], erlang_creators()),
     ?assert(lists:all(fun(K) -> lists:member(K, Keys) end, [joe, robert, mike])).
@@ -287,6 +289,27 @@ update_3_test() ->
                   update([erlang], "The Movie", #{})),
      ?assertEqual(#{erlang => "The Movie"},
                   update([erlang], "The Movie", #{erlang => ""}))].
+
+update_with_3_test() ->
+    [?assertError({badkey, erlang},
+                  update_with([erlang], fun(_) -> error end, #{})),
+     ?assertError(function_clause,
+                  update_with([erlang], "The Movie", #{erlang => ""})),
+     ?assertEqual(#{erlang => "The Movie"},
+                  update_with([erlang],
+                                 fun("") -> "The Movie" end,
+                                 #{erlang => ""})),
+     ?assertEqual(#{erlang => #{the => #{movie => "The Movie"}}},
+                  update_with([erlang, the, movie],
+                                 fun("") -> "The Movie" end,
+                                 #{erlang => #{the => #{movie => ""}}}))].
+
+update_with_4_test() ->
+    ?assertEqual(#{my => #{counter => 1, new_counter => 42}},
+                 update_with([my, new_counter],
+                             fun(Counter) -> Counter + 1 end,
+                             42,
+                             #{my => #{counter => 1}})).
 
 values_2_test() ->
     Values = values([erlang, creators], erlang_creators()),
