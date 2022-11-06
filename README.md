@@ -53,12 +53,12 @@ default
 #{my => #{more => #{deep => #{nested => map}}}}
 ```
 
-### get_and_update/3
+### update_with/3
 
 ```erlang
 1> Map = #{someone => #{age => 17}}.
 #{someone => #{age => 17}}
-2> maps_in:get_and_update([someone, age], fun(Age) -> Age + 1 end, Map).
+2> maps_in:update_with([someone, age], fun(Age) -> Age + 1 end, Map).
 #{someone => #{age => 18}}
 ```
 

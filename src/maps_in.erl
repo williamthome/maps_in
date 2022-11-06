@@ -7,8 +7,8 @@
 %%%-----------------------------------------------------------------------------
 -module(maps_in).
 
--export([get/2, get/3, get_and_update/3, is_key/3, keys/2, map/3, put/3,
-         remove/3, size/2, update/3, values/2, with/3, without/3]).
+-export([get/2, get/3, is_key/3, keys/2, map/3, put/3, remove/3, size/2,
+         update/3, update_with/3, values/2, with/3, without/3]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -46,21 +46,6 @@ get([Key], Map, Default) ->
     maps:get(Key, Map, Default);
 get([Key | Path], Map, Default) ->
     get(Path, maps:get(Key, Map), Default).
-
-%%------------------------------------------------------------------------------
-%% @doc get_and_update/3.
-%% @end
-%%------------------------------------------------------------------------------
--spec get_and_update(Path, Fun, Map1) -> Map2 when
-    Path :: [term()],
-    Fun :: fun((term()) -> term()),
-    Map1 :: map(),
-    Map2 :: map().
-
-get_and_update([Key], Fun, Map) when is_function(Fun, 1) ->
-    maps:update(Key, Fun(maps:get(Key, Map)), Map);
-get_and_update([Key | Path], Fun, Map) when is_function(Fun, 1) ->
-    maps:update(Key, get_and_update(Path, Fun, maps:get(Key, Map, #{})), Map).
 
 %%------------------------------------------------------------------------------
 %% @doc is_key/3.
@@ -158,6 +143,21 @@ update([], Map, _) ->
     Map.
 
 %%------------------------------------------------------------------------------
+%% @doc update_with/3.
+%% @end
+%%------------------------------------------------------------------------------
+-spec update_with(Path, Fun, Map1) -> Map2 when
+    Path :: [term()],
+    Fun :: fun((term()) -> term()),
+    Map1 :: map(),
+    Map2 :: map().
+
+update_with([Key], Fun, Map) when is_function(Fun, 1) ->
+    maps:update_with(Key, Fun, Map);
+update_with([Key | Path], Fun, Map) when is_function(Fun, 1) ->
+    maps:update(Key, update_with(Path, Fun, maps:get(Key, Map, #{})), Map).
+
+%%------------------------------------------------------------------------------
 %% @doc values/2.
 %% @end
 %%------------------------------------------------------------------------------
@@ -235,17 +235,17 @@ get_3_test() ->
      ?assertEqual("Mike Williams",
                   get([mike, name], the_movie(), "Mike Williams"))].
 
-get_and_update_3_test() ->
+update_with_3_test() ->
     [?assertError({badkey, erlang},
-                  get_and_update([erlang], fun(_) -> error end, #{})),
+                  update_with([erlang], fun(_) -> error end, #{})),
      ?assertError(function_clause,
-                  get_and_update([erlang], "The Movie", #{erlang => ""})),
+                  update_with([erlang], "The Movie", #{erlang => ""})),
      ?assertEqual(#{erlang => "The Movie"},
-                  get_and_update([erlang],
+                  update_with([erlang],
                                  fun("") -> "The Movie" end,
                                  #{erlang => ""})),
      ?assertEqual(#{erlang => #{the => #{movie => "The Movie"}}},
-                  get_and_update([erlang, the, movie],
+                  update_with([erlang, the, movie],
                                  fun("") -> "The Movie" end,
                                  #{erlang => #{the => #{movie => ""}}}))].
 
