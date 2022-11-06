@@ -208,7 +208,7 @@ merge(Map1, [Key | Path], Map2) ->
 %% @end
 %%------------------------------------------------------------------------------
 -spec merge_with(Combiner, Map1, Path, Map2) -> Map3 when
-    Combiner :: fun((3) -> map()),
+    Combiner :: fun((term(), term(), term()) -> term()),
     Map1 :: map(),
     Path :: [term()],
     Map2 :: map(),
